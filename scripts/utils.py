@@ -7,19 +7,29 @@ def prepare_dataframe(df,cols_to_use,n_past=14,n_future=1):
     updated_df = df.copy()
 
     updated_df = updated_df[cols_to_use] 
-    upd_scaler = MinMaxScaler()
-    upd_scaler = upd_scaler.fit(updated_df)
-    updated_df_scaled = upd_scaler.transform(updated_df)
+    updated_df_scaled = updated_df.copy()
+
+    scalers = {}
+    for column in updated_df.columns:
+        scaler = MinMaxScaler()
+        column_data = updated_df[column].values.reshape(-1, 1)  # Reshape the column to fit the scaler
+        scalers[column] = scaler.fit(column_data)
+        scaled_column = scaler.transform(column_data)
+        updated_df_scaled[column] = scaled_column.flatten()
+
+    # upd_scaler = MinMaxScaler()
+    # upd_scaler = upd_scaler.fit(updated_df)
+    # updated_df_scaled = upd_scaler.transform(updated_df)
 
     X = []
     Y = []
     n_past = n_past  # Number of past days we want to use to predict the future.
     n_future = n_future   # Number of days we want to look into the future based on the past days.
     for i in range(n_past, len(updated_df_scaled) - n_future + 1,n_future):
-        X.append(updated_df_scaled[i - n_past:i, 0:updated_df_scaled.shape[1]])
-        Y.append(updated_df_scaled[i:i + n_future, 3]) #index 3 is Close
+        X.append(updated_df_scaled.iloc[i - n_past:i, :].values)
+        Y.append(updated_df_scaled.iloc[i:i + n_future, 3].values) #index 3 is Close
 
-    return np.array(X), np.array(Y), upd_scaler
+    return np.array(X), np.array(Y), scalers
 
 
 

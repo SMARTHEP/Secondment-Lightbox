@@ -38,12 +38,12 @@ df_for_training5 = amzn_ohlc_df[cols].astype(float)
 n_past = 14
 n_future = 1
 columns_to_use = ['Open', 'High', 'Low', 'Close', 'Volume']
-trainX, trainY, train_scaler = prepare_dataframe(df_for_training,columns_to_use,n_past,n_future)
-trainX1, trainY1, train_scaler = prepare_dataframe(df_for_training1,columns_to_use,n_past,n_future)
-trainX2, trainY2, train_scaler = prepare_dataframe(df_for_training2,columns_to_use,n_past,n_future)
-trainX3, trainY3, train_scaler = prepare_dataframe(df_for_training3,columns_to_use,n_past,n_future)
-trainX4, trainY4, train_scaler = prepare_dataframe(df_for_training4,columns_to_use,n_past,n_future)
-trainX5, trainY5, train_scaler = prepare_dataframe(df_for_training5,columns_to_use,n_past,n_future)
+trainX, trainY, _ = prepare_dataframe(df_for_training,columns_to_use,n_past,n_future)
+trainX1, trainY1, _ = prepare_dataframe(df_for_training1,columns_to_use,n_past,n_future)
+trainX2, trainY2, _ = prepare_dataframe(df_for_training2,columns_to_use,n_past,n_future)
+trainX3, trainY3, _ = prepare_dataframe(df_for_training3,columns_to_use,n_past,n_future)
+trainX4, trainY4, _ = prepare_dataframe(df_for_training4,columns_to_use,n_past,n_future)
+trainX5, trainY5, _ = prepare_dataframe(df_for_training5,columns_to_use,n_past,n_future)
 
 
 
@@ -75,7 +75,7 @@ big_train_Y = np.concatenate((trainY1,trainY2,trainY3,trainY4,trainY5,trainY),ax
 #complete training
 history = model.fit(big_train_X, 
                     big_train_Y, 
-                    epochs=15, 
+                    epochs=8, 
                     batch_size=16, 
                     validation_split=0.3, 
                     verbose=1)

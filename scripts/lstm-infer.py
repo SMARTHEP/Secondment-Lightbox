@@ -35,11 +35,8 @@ model_dir = "/Users/leonbozianu/work/lightbox/models/LSTM3DO_14past_1fut_15e_150
 model_save_loc = model_dir + "/final_weight.h5"
 model.load_weights(model_save_loc)
 
-
-
 forecast = model.predict(testX)
-forecast_copies = np.repeat(forecast,len(columns_to_use),axis=-1)
-y_pred_model = scaler.inverse_transform(forecast_copies)[:,3] #index 3 is Close
+y_pred_model = scaler['Close'].inverse_transform(forecast).squeeze()
 
 prediction_df = pd.DataFrame({'Date':forecast_date_array,'Close':truth_closes,'Close_pred':y_pred_model})
 
