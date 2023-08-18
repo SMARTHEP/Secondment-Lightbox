@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+import os
 import pandas_ta
 
 import tensorflow as tf
@@ -17,6 +18,7 @@ spy_ohlc_df = yf.download('SPY', start='2012-01-01', end=train_end_date)
 msft_ohlc_df = yf.download('MSFT', start='2012-01-01', end=train_end_date)
 aapl_ohlc_df = yf.download('AAPL', start='2012-01-01', end=train_end_date)
 goog_ohlc_df = yf.download('GOOG', start='2012-01-01', end=train_end_date)
+amzn_ohlc_df = yf.download('AMZN', start='2012-01-01', end=train_end_date)
 
 #prepare dataframes, then convert to appropriate numpy
 df = name_ohlc_df.copy()
@@ -31,6 +33,7 @@ df_for_training1 = spy_ohlc_df[cols].astype(float)
 df_for_training2 = msft_ohlc_df[cols].astype(float)
 df_for_training3 = aapl_ohlc_df[cols].astype(float)
 df_for_training4 = goog_ohlc_df[cols].astype(float)
+df_for_training5 = amzn_ohlc_df[cols].astype(float)
 
 n_past = 14
 n_future = 1
@@ -40,6 +43,7 @@ trainX1, trainY1, train_scaler = prepare_dataframe(df_for_training1,columns_to_u
 trainX2, trainY2, train_scaler = prepare_dataframe(df_for_training2,columns_to_use,n_past,n_future)
 trainX3, trainY3, train_scaler = prepare_dataframe(df_for_training3,columns_to_use,n_past,n_future)
 trainX4, trainY4, train_scaler = prepare_dataframe(df_for_training4,columns_to_use,n_past,n_future)
+trainX5, trainY5, train_scaler = prepare_dataframe(df_for_training5,columns_to_use,n_past,n_future)
 
 
 
@@ -64,8 +68,8 @@ def build_lstm_model(input_shape):
 
 model = build_lstm_model(input_shape=(n_past, len(columns_to_use)))
 model.compile(optimizer=tf.keras.optimizers.legacy.Adam(), loss='mse')
-big_train_X = np.concatenate((trainX1,trainX2,trainX3,trainX4,trainX),axis=0)
-big_train_Y = np.concatenate((trainY1,trainY2,trainY3,trainY4,trainY),axis=0)
+big_train_X = np.concatenate((trainX1,trainX2,trainX3,trainX4,trainX5,trainX),axis=0)
+big_train_Y = np.concatenate((trainY1,trainY2,trainY3,trainY4,trainY5,trainY),axis=0)
 
 
 #complete training
@@ -77,8 +81,10 @@ history = model.fit(big_train_X,
                     verbose=1)
 
 model_name = "LSTM3DO_{}past_{}fut_{}e_{}samples".format(n_past,n_future,history.params['epochs'],len(big_train_Y))
-# model.save_weights('/Users/leonbozianu/work/lightbox/models/{}/{}'.format(model_name,model_name))
-model.save('/Users/leonbozianu/work/lightbox/models/{}/{}.keras'.format(model_name,model_name))
+model_folder = '/Users/leonbozianu/work/lightbox/models/{}'.format(model_name)
+if not os.path.exists(model_folder):
+    os.makedirs(model_folder)
+model.save_weights(filepath=model_folder+'/final_weight.h5')
 
 
 

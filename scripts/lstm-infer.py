@@ -29,12 +29,11 @@ testX, testY, scaler = prepare_dataframe(forecast_df,columns_to_use,n_past,n_fut
 
 
 #load the model and use it to predict the next Close
-# model = build_lstm_model(input_shape=(n_past, len(columns_to_use)))
+model = build_lstm_model(input_shape=(n_past, len(columns_to_use)))
 # Restore the weights
-model_dir = "/Users/leonbozianu/work/lightbox/models/LSTM3DO_14past_1fut_15e_12515samples/"
-model_save_loc = model_dir + "LSTM3DO_14past_1fut_15e_12515samples.keras"
-# model.load_weights(model_save_loc)
-model = tf.keras.models.load_model(model_save_loc)
+model_dir = "/Users/leonbozianu/work/lightbox/models/LSTM3DO_14past_1fut_15e_15018samples"
+model_save_loc = model_dir + "/final_weight.h5"
+model.load_weights(model_save_loc)
 
 
 
@@ -61,6 +60,6 @@ ax[1].grid(color="0.95")
 ax[1].legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize='x-small')
 
 fig.tight_layout()
-fig.savefig(model_dir+"")
+fig.savefig(model_dir+"/test_set_Close.png")
 
 

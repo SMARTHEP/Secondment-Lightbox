@@ -1,13 +1,13 @@
 import numpy as np
 import tensorflow as tf
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 
 def prepare_dataframe(df,cols_to_use,n_past=14,n_future=1):
     updated_df = df.copy()
 
     updated_df = updated_df[cols_to_use] 
-    upd_scaler = StandardScaler()
+    upd_scaler = MinMaxScaler()
     upd_scaler = upd_scaler.fit(updated_df)
     updated_df_scaled = upd_scaler.transform(updated_df)
 
