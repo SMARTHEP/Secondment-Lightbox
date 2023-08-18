@@ -35,7 +35,7 @@ df_for_training3 = aapl_ohlc_df[cols].astype(float)
 df_for_training4 = goog_ohlc_df[cols].astype(float)
 df_for_training5 = amzn_ohlc_df[cols].astype(float)
 
-n_past = 14
+n_past = 20
 n_future = 1
 columns_to_use = ['Open', 'High', 'Low', 'Close', 'Volume']
 trainX, trainY, _ = prepare_dataframe(df_for_training,columns_to_use,n_past,n_future)
@@ -75,7 +75,7 @@ big_train_Y = np.concatenate((trainY1,trainY2,trainY3,trainY4,trainY5,trainY),ax
 #complete training
 history = model.fit(big_train_X, 
                     big_train_Y, 
-                    epochs=8, 
+                    epochs=15, 
                     batch_size=16, 
                     validation_split=0.3, 
                     verbose=1)

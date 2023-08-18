@@ -60,3 +60,16 @@ fig.tight_layout()
 fig.savefig(model_dir+"/test_set_Close.png")
 
 
+
+prediction_df['pct_change'] = prediction_df['Close'].pct_change().fillna(0)
+prediction_df['pct_change_pred'] = (prediction_df['Close_pred'] - prediction_df['Close']) / prediction_df['Close']
+
+print(prediction_df.head())
+plt.figure()
+plt.scatter(prediction_df['pct_change'], prediction_df['pct_change_pred'],color='orange',alpha=.4)
+plt.plot(prediction_df['pct_change'], prediction_df['pct_change'],lw=4,color='cadetblue')
+plt.axhline(y=0,ls='--',color='red')
+plt.axvline(x=0,ls='--',color='red')
+plt.xlabel('True Values')
+plt.ylabel('Predictions')
+plt.savefig(model_dir+"/test_set_scatter.png")
