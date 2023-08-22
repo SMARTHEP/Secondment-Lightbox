@@ -17,9 +17,6 @@ def prepare_dataframe(df,cols_to_use,n_past=14,n_future=1):
         scaled_column = scaler.transform(column_data)
         updated_df_scaled[column] = scaled_column.flatten()
 
-    # upd_scaler = MinMaxScaler()
-    # upd_scaler = upd_scaler.fit(updated_df)
-    # updated_df_scaled = upd_scaler.transform(updated_df)
 
     X = []
     Y = []
@@ -28,6 +25,9 @@ def prepare_dataframe(df,cols_to_use,n_past=14,n_future=1):
     for i in range(n_past, len(updated_df_scaled) - n_future + 1,n_future):
         X.append(updated_df_scaled.iloc[i - n_past:i, :].values)
         Y.append(updated_df_scaled.iloc[i:i + n_future, 3].values) #index 3 is Close
+        # print(updated_df_scaled.iloc[i-1:i + n_future, 3].values)
+        # print(updated_df_scaled.iloc[i,:].values)
+        # break
 
     return np.array(X), np.array(Y), scalers
 
