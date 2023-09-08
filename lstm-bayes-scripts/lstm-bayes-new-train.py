@@ -25,7 +25,7 @@ df = pd.DataFrame(data)
 train_size = int(0.9 * len(df))
 print('TRAIN UNTIL:',df.iloc[train_size],'\tTEST UNTIL:',df.iloc[-1],'\n\n\n')
 
-sequence_length = 14
+sequence_length = 10
 train_input = np.lib.stride_tricks.sliding_window_view(df.iloc[:train_size,1].values, (sequence_length,))
 val_input = np.lib.stride_tricks.sliding_window_view(df.iloc[train_size:-1,1].values, (sequence_length,))
 # train_input = train_input.reshape(len(train_input),-1,2)
@@ -40,7 +40,7 @@ deep_model = tf.keras.Sequential([
   tf.keras.layers.Dense(8,activation='relu'),
   tf.keras.layers.Dense(1+1),
   tfp.layers.DistributionLambda(
-      lambda t: tfd.Normal(loc=t[..., :1],scale=1e-3 + tf.math.softplus(0.01*t[...,1:]))),
+      lambda t: tfd.Normal(loc=t[..., :1],scale=1e-3 + tf.math.softplus(0.001*t[...,1:]))),
       # lambda t: tfd.StudentT(df=4,loc=t[..., :1],scale=1e-3 + tf.math.softplus(t[...,1:])))
 ])
 
