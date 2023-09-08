@@ -15,7 +15,7 @@ tfd = tfp.distributions
 
 name = 'AAPL'
 
-data_end_date = '2021-08-01'
+data_end_date = '2014-08-01'
 name_ohlc_df = yf.download(name, start='2002-01-01', end=data_end_date)
 name_ohlc_df = name_ohlc_df.reset_index()
 data = {'date': name_ohlc_df.Date, 'close': name_ohlc_df.Close, 'volume': name_ohlc_df.Volume}
@@ -25,7 +25,7 @@ df = pd.DataFrame(data)
 train_size = int(0.9 * len(df))
 print('TRAIN UNTIL:',df.iloc[train_size],'\tTEST UNTIL:',df.iloc[-1],'\n\n\n')
 
-sequence_length = 10
+sequence_length = 14
 train_input = np.lib.stride_tricks.sliding_window_view(df.iloc[:train_size,1].values, (sequence_length,))
 val_input = np.lib.stride_tricks.sliding_window_view(df.iloc[train_size:-1,1].values, (sequence_length,))
 
@@ -39,7 +39,7 @@ bayes_lstm_model = tf.keras.Sequential([
   tf.keras.layers.Dense(8,activation='relu'),
   tf.keras.layers.Dense(1+1),
   tfp.layers.DistributionLambda(
-      lambda t: tfd.Normal(loc=t[..., :1],scale=1e-3 + tf.math.softplus(0.001*t[...,1:]))),
+      lambda t: tfd.Normal(loc=t[..., :1],scale=1e-3 + tf.math.softplus(0.01*t[...,1:]))),
     #   lambda t: tfd.StudentT(df=4,loc=t[..., :1],scale=1e-3 + tf.math.softplus(t[...,1:])))
 ])
 
@@ -118,16 +118,9 @@ fb = calculate_forecast_bias(y2, m)
 r2 = calculate_r2(y2, m)
 print("MAPE:", mape,'\nRMSE:',rmse,'\nMAE:',mae,'\nFB:',fb,'\nR2:',r2)
 print()
-# mape = calculate_mape(y2, np.nan_to_num(y2shift,nan=0.0))
-# rmse = calculate_rmse(y2, np.nan_to_num(y2shift,nan=0.0))
-# mae = calculate_mae(y2, np.nan_to_num(y2shift,nan=0.0))
-# fb = calculate_forecast_bias(y2, np.nan_to_num(y2shift,nan=0.0))
-# r2 = calculate_r2(y2, np.nan_to_num(y2shift,nan=0.0))
-# print("MAPE:", mape,'\nRMSE:',rmse,'\nMAE:',mae,'\nFB:',fb,'\nR2:',r2)
+
 
 y2 = y2.reshape(-1)
-print(np.diff(y2).shape,np.diff(y2).tolist())
-print(y2.shape)
 true_pct_changes = (np.diff(y2) / y2[:-1]) * 100
 pred_pct_changes = ((m - y2) / y2) * 100 
 
@@ -161,7 +154,7 @@ below_result_dates = below_result['Date'].tolist()
 plt.figure(figsize=(10, 6))
 plt.plot(prediction_df['Date'],prediction_df['Close'], label='True Values', color='black')
 plt.plot(prediction_df['Date'],prediction_df['Model_mean'], label='Predicted Mean', color='red')
-plt.fill_between(prediction_df['Date'], prediction_df[f'm-{level}s'], prediction_df[f'm+{level}s'], color='indigo', alpha=0.3, label='$3\sigma$ Uncertainty')
+plt.fill_between(prediction_df['Date'], prediction_df[f'm-{level}s'], prediction_df[f'm+{level}s'], color='indigo', alpha=0.3, label=f'{level}$\sigma$ Uncertainty')
 plt.axvline(above_result_dates[0], color='g', linestyle='--', label='Above Cond. Met',alpha=0.3)
 plt.axvline(below_result_dates[0], color='r', linestyle='--', label='Below Cond. Met',alpha=0.3)
 
