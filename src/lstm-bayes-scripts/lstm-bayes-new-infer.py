@@ -11,8 +11,6 @@ import tensorflow as tf
 import tensorflow_probability as tfp
 tfd = tfp.distributions
 
-
-
 name = 'AAPL'
 
 data_end_date = '2014-08-01'

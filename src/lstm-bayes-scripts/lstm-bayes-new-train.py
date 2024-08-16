@@ -11,8 +11,6 @@ import tensorflow as tf
 import tensorflow_probability as tfp
 tfd = tfp.distributions
 
-
-
 name = 'AAPL'
 
 data_end_date = '2014-08-01'
@@ -40,7 +38,7 @@ deep_model = tf.keras.Sequential([
   tf.keras.layers.Dense(8,activation='relu'),
   tf.keras.layers.Dense(1+1),
   tfp.layers.DistributionLambda(
-      lambda t: tfd.Normal(loc=t[..., :1],scale=1e-3 + tf.math.softplus(0.001*t[...,1:]))),
+      lambda t: tfd.Normal(loc=t[..., :1], scale=1e-3 + tf.math.softplus(0.001*t[...,1:]))),
       # lambda t: tfd.StudentT(df=4,loc=t[..., :1],scale=1e-3 + tf.math.softplus(t[...,1:])))
 ])
 
@@ -53,8 +51,8 @@ history_ = deep_model.fit(train_input, y1, epochs=1500, verbose=1)
 model_folder = '/Users/leonbozianu/work/lightbox/models/{}'.format("model-{}".format(data_end_date))
 if not os.path.exists(model_folder):
     os.makedirs(model_folder)
-deep_model.save_weights(filepath=model_folder+'/weights-end-date-{}.h5'.format(data_end_date))
-print("Model weights saved")
+# deep_model.save_weights(filepath=model_folder+'/weights-end-date-{}.h5'.format(data_end_date))
+# print("Model weights saved")
 
 
 
