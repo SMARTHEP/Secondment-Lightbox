@@ -2,3 +2,4 @@ models/
 compare/
 *.pkl*
 *.out
+notebooks/.ipynb_checkpoints/
