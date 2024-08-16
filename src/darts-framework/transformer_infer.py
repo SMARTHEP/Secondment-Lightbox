@@ -18,10 +18,6 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-
-
-
-
 # Read data:
 series = AirPassengersDataset().load().astype(np.float32)
 
