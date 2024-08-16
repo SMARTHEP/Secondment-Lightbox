@@ -38,23 +38,51 @@ val_input = np.lib.stride_tricks.sliding_window_view(scaled_df.iloc[train_size:-
 y1 = np.array(df.iloc[sequence_length:train_size+1,1]).T.astype(np.float32).reshape(-1,1)
 y2 = np.array(df.iloc[sequence_length+train_size:,1]).T.astype(np.float32).reshape(-1,1)
 
+
+# Specify the prior over `keras.layers.Dense` `kernel` and `bias`.
+def prior_trainable(kernel_size, bias_size=0, dtype=None):
+    n = kernel_size + bias_size
+    return tf.keras.Sequential([
+    tfp.layers.VariableLayer(n, dtype=dtype),
+    tfp.layers.DistributionLambda(lambda t: tfp.distributions.Independent(
+        tfp.distributions.Normal(loc=t, scale=1),
+        reinterpreted_batch_ndims=1)),
+    ])
+    
+# Specify the surrogate posterior over `keras.layers.Dense` `kernel` and `bias`.
+def posterior_mean_field(kernel_size, bias_size=0, dtype=None):
+    n = kernel_size + bias_size
+    c = np.log(np.expm1(1.))
+    return tf.keras.Sequential([
+    tfp.layers.VariableLayer(2 * n, dtype=dtype),
+    tfp.layers.DistributionLambda(lambda t: tfp.distributions.Independent(
+        tfp.distributions.Normal(
+            loc=t[..., :n],
+            scale=1e-5 + tf.nn.softplus(c + t[..., n:])
+        ),
+    reinterpreted_batch_ndims=1)),
+    ])
+
+
 deep_model = tf.keras.Sequential([
-  tf.keras.layers.LSTM(32,activation='selu',input_shape=(sequence_length,3),return_sequences=False),
+  tf.keras.layers.LSTM(64,activation='selu',input_shape=(sequence_length,3),return_sequences=False),
   tf.keras.layers.Dense(64,activation='selu'),
-  tf.keras.layers.Dense(24,activation='selu'),
+  tf.keras.layers.Dense(32,activation='selu'),
+  tf.keras.layers.Dense(16,activation='selu'),
   tf.keras.layers.Dense(8,activation='selu'),
-  tf.keras.layers.Dense(1+1),
+  tfp.layers.DenseVariational(1+1, posterior_mean_field, prior_trainable),
+#   tf.keras.layers.Dense(1+1),
   tfp.layers.DistributionLambda(
       lambda t: tfd.Normal(loc=t[..., :1],scale=1e-3 + tf.math.softplus(0.001*t[...,1:]))),
 ])
-
-
+print(deep_model.summary())
+quit()
 
 
 negloglik = lambda y, rv_y: -rv_y.log_prob(y) #-y_pred.log_prob(y_true)
 deep_model.compile(optimizer=tf.keras.optimizers.legacy.Adam(), loss=negloglik)
-history_ = deep_model.fit(train_input, y1, epochs=750, verbose=1)
-model_folder = '/Users/leonbozianu/work/lightbox/models/{}'.format("model-{}-scaled".format(data_end_date))
+history_ = deep_model.fit(train_input, y1, epochs=1500, verbose=1)
+model_folder = '/Users/leonbozianu/work/lightbox/models/{}'.format("model-{}-dv".format(data_end_date))
 if not os.path.exists(model_folder):
     os.makedirs(model_folder)
 deep_model.save_weights(filepath=model_folder+'/weights-end-date-{}.h5'.format(data_end_date))
