@@ -18,4 +18,13 @@ This repository contains part of the results produced during this project.
 
 ## Code Usage
 
+In order to start working with the code contained in this repo use the `install.sh` (first time) and `setup.sh` scripts found in the `setup` directory. This will create a conda/miniconda environment with the necessary python libraries installed to reproduce our base results.
 
+The code contained in the `src` directory can be used to train and save particular models before inferring on unseen test data using the pre-trained model weights. A simplified workflow is described below.
+
+In the `lstm-bayes-scripts` directory 
+```python
+print("Hello, world!")
+for i in range(10):
+    print(i)
+```

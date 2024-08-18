@@ -48,7 +48,7 @@ negloglik = lambda y, rv_y: -rv_y.log_prob(y)
 bayes_lstm_model.compile(optimizer=tf.keras.optimizers.legacy.Adam(), loss=negloglik)
 # Restore the weights
 model_name = "model-{}".format(data_end_date)
-model_save_loc = "/Users/leonbozianu/work/lightbox/models/{}".format(model_name) + "/weights-end-date-{}.h5".format(data_end_date)
+model_save_loc = "./models/{}".format(model_name) + "/weights-end-date-{}.h5".format(data_end_date)
 bayes_lstm_model.load_weights(model_save_loc)
 
 

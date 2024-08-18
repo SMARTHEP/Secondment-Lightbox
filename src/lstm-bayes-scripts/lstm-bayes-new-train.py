@@ -48,7 +48,7 @@ deep_model = tf.keras.Sequential([
 negloglik = lambda y, rv_y: -rv_y.log_prob(y) #-y_pred.log_prob(y_true)
 deep_model.compile(optimizer=tf.keras.optimizers.legacy.Adam(), loss=negloglik)
 history_ = deep_model.fit(train_input, y1, epochs=1500, verbose=1)
-model_folder = '/Users/leonbozianu/work/lightbox/models/{}'.format("model-{}".format(data_end_date))
+model_folder = './models/{}'.format("model-{}".format(data_end_date))
 if not os.path.exists(model_folder):
     os.makedirs(model_folder)
 # deep_model.save_weights(filepath=model_folder+'/weights-end-date-{}.h5'.format(data_end_date))
