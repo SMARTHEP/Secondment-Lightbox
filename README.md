@@ -10,7 +10,7 @@ The work contained in this repository focuses on the application of machine lear
 Algorithmic biases were prevented by dividing the time series in training and testing periods. A Transfer Learning technique was employed in order to improve the training of the model by combining data from different securities to compensate for the limited availability of historical data. The training sample was identified by selecting datasets showing similar statistical features. The various models provide future predictions in unseen time-series data along with associated uncertainties.
 
 This repository contains the codebase for a number of ML models ranging from the simple to the complex. We utilise and show the training and inference from classical boosted decision trees to Bayesian and recurrent neural networks. Each network architecture informed subsequent designs.
-An important part of the problem was the model adapting to changing and often turbulent time series data. In comparison to other ML applications the models are susceptible to going “out-of-date” quickly - thus presenting challenges to out choice of training/validation data.
+An important part of the problem was the model adapting to changing and often turbulent time series data. In comparison to other ML applications the models are susceptible to going “out-of-date” (out-of-sample) very rapidly following training - thus presenting challenges to our choice of training/validation data.
 
 This repository contains part of the results produced during this project.
 
