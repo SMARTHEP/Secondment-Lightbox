@@ -22,9 +22,15 @@ In order to start working with the code contained in this repo use the `install.
 
 The code contained in the `src` directory can be used to train and save particular models before inferring on unseen test data using the pre-trained model weights. A simplified workflow is described below.
 
-In the `lstm-bayes-scripts` directory 
-```python
-print("Hello, world!")
-for i in range(10):
-    print(i)
+In the `lstm-scripts` directory the training can be initiated by giving several command line arguments to the training script for example
 ```
+python lstm-train.py --name AAPL --end_date 2014-01-01 --seq_length 10 --epochs 150
+```
+where the required arguments are `--name` the name of the underlying stock or asset following yahoo finance naming, `--end_date` the final date that will be included in your overall dataset, `--seq_length` the sequence length that the LSTM model considers and `--epochs` the number of epochs to train.
+Similarly the inference script can be run with the following example:
+```
+python lstm-infer.py --name AAPL --end_date 2014-01-01 --seq_length 10
+```
+with the same command line arguments, excluding `--epochs`. The name of the saved model weights is consistent across `train.py` and `infer.py`.
+
+

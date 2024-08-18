@@ -1,19 +1,25 @@
 import numpy as np
 import pandas as pd
-import datetime
 from matplotlib import pyplot as plt
 import yfinance as yf
-import os
+import argparse
 
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import tensorflow as tf
 import tensorflow_probability as tfp
 tfd = tfp.distributions
 
-name = 'AAPL'
 
-data_end_date = '2014-08-01'
+parser = argparse.ArgumentParser(description="Process input arguments for model training.")
+
+parser.add_argument('--name', required=True, help="Name of the underlying")
+parser.add_argument('--end_date', required=True, help="End date for the entire dataset")
+parser.add_argument('--seq_length', type=int, required=True, help="Sequence length for the model")
+args = parser.parse_args()
+
+
+name = args.name
+data_end_date = args.end_date
 name_ohlc_df = yf.download(name, start='2002-01-01', end=data_end_date)
 name_ohlc_df = name_ohlc_df.reset_index()
 data = {'date': name_ohlc_df.Date, 'close': name_ohlc_df.Close, 'volume': name_ohlc_df.Volume}
@@ -22,7 +28,7 @@ df = pd.DataFrame(data)
 train_size = int(0.9 * len(df))
 print('TRAIN UNTIL:',df.iloc[train_size],'\tTEST UNTIL:',df.iloc[-1],'\n\n\n')
 
-sequence_length = 10
+sequence_length = args.seq_length
 train_input = np.lib.stride_tricks.sliding_window_view(df.iloc[:train_size,1].values, (sequence_length,))
 val_input = np.lib.stride_tricks.sliding_window_view(df.iloc[train_size:-1,1].values, (sequence_length,))
 
