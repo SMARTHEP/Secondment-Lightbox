@@ -16,9 +16,6 @@ ticker_symbol = "GLD"  # This is the ticker symbol for gold futures
 start_date = datetime.datetime.now() - datetime.timedelta(days=20*365)  
 end_date = datetime.datetime.now()
 gold_data = yf.download(ticker_symbol, start=start_date, end=end_date)
-# gold_data.reset_index(inplace=True)
-print(gold_data)
-print(gold_data.columns)
 
 dfm = gold_data.resample('M').mean()
 dfm = dfm.reset_index()

@@ -22,7 +22,7 @@ In order to start working with the code contained in this repo use the `install.
 
 The code contained in the `src` directory can be used to train and save particular models before inferring on unseen test data using the pre-trained model weights. A simplified workflow is described below.
 
-In the `lstm-scripts` directory the training can be initiated by giving several command line arguments to the training script for example
+In the `lstm-scripts` directory we build a custom model using the tensorflow ML library. The training can be initiated by giving several command line arguments to the training script for example
 ```
 python lstm-train.py --name AAPL --end_date 2014-01-01 --seq_length 10 --epochs 150
 ```
@@ -33,4 +33,15 @@ python lstm-infer.py --name AAPL --end_date 2014-01-01 --seq_length 10
 ```
 with the same command line arguments, excluding `--epochs`. The name of the saved model weights is consistent across `train.py` and `infer.py`.
 
+
+In the `darts-framework` directory we use the [Darts](https://github.com/unit8co/darts "Darts") python library to aid with the analysis and processing of time series data natively in python. Much of the model and architecture initialisation is done in the Darts backend therefore to train and infer it is simply enough to call the python scripts
+```
+python commodity_train.py
+```
+or
+```
+python commodity_infer.py
+```
+which specify the ticker symbol, dataset beginning and end before training (and saving) a number of the currently implemented models curated by Darts. 
+The `rnn_train.py` and `transformer_train.py` specifically look at the Darts implementation of a simple LSTM or Transformer based model, with the same usage as the `commodity_*.py` scripts.
 
