@@ -19,7 +19,6 @@ name_ohlc_df = name_ohlc_df.reset_index()
 data = {'date': name_ohlc_df.Date, 'close': name_ohlc_df.Close, 'volume': name_ohlc_df.Volume}
 df = pd.DataFrame(data)
 
-# concatenated_df = pd.concat([df1, df2], axis=0, ignore_index=True)
 train_size = int(0.9 * len(df))
 print('TRAIN UNTIL:',df.iloc[train_size],'\tTEST UNTIL:',df.iloc[-1],'\n\n\n')
 
@@ -40,8 +39,6 @@ bayes_lstm_model = tf.keras.Sequential([
       lambda t: tfd.Normal(loc=t[..., :1],scale=1e-3 + tf.math.softplus(0.001*t[...,1:]))),
     #   lambda t: tfd.StudentT(df=4,loc=t[..., :1],scale=1e-3 + tf.math.softplus(t[...,1:])))
 ])
-
-
 
 
 negloglik = lambda y, rv_y: -rv_y.log_prob(y)

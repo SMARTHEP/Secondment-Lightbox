@@ -19,15 +19,13 @@ name_ohlc_df = name_ohlc_df.reset_index()
 data = {'date': name_ohlc_df.Date, 'close': name_ohlc_df.Close, 'volume': name_ohlc_df.Volume}
 df = pd.DataFrame(data)
 
-# concatenated_df = pd.concat([df1, df2], axis=0, ignore_index=True)
 train_size = int(0.9 * len(df))
 print('TRAIN UNTIL:',df.iloc[train_size],'\tTEST UNTIL:',df.iloc[-1],'\n\n\n')
 
 sequence_length = 10
 train_input = np.lib.stride_tricks.sliding_window_view(df.iloc[:train_size,1].values, (sequence_length,))
 val_input = np.lib.stride_tricks.sliding_window_view(df.iloc[train_size:-1,1].values, (sequence_length,))
-# train_input = train_input.reshape(len(train_input),-1,2)
-# val_input = val_input.reshape(len(val_input),-1,2)
+
 y1 = np.array(df.iloc[sequence_length:train_size+1,1]).T.astype(np.float32).reshape(-1,1)
 y2 = np.array(df.iloc[sequence_length+train_size:,1]).T.astype(np.float32).reshape(-1,1)
 
@@ -43,23 +41,20 @@ deep_model = tf.keras.Sequential([
 ])
 
 
-
-
 negloglik = lambda y, rv_y: -rv_y.log_prob(y) #-y_pred.log_prob(y_true)
 deep_model.compile(optimizer=tf.keras.optimizers.legacy.Adam(), loss=negloglik)
 history_ = deep_model.fit(train_input, y1, epochs=1500, verbose=1)
 model_folder = './models/{}'.format("model-{}".format(data_end_date))
 if not os.path.exists(model_folder):
     os.makedirs(model_folder)
-# deep_model.save_weights(filepath=model_folder+'/weights-end-date-{}.h5'.format(data_end_date))
-# print("Model weights saved")
+deep_model.save_weights(filepath=model_folder+'/weights-end-date-{}.h5'.format(data_end_date))
+print("Model weights saved")
 
 
 
 plt.figure(figsize=(4,3))
-
-plt.plot(history_.history['loss'], label='Train loss B')
-# plt.plot(history_.history['val_loss'], label='Val loss B')
+plt.plot(history_.history['loss'], label='Train loss')
+plt.plot(history_.history['val_loss'], label='Val loss')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize='x-small')
